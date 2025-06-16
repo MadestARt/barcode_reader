@@ -32,33 +32,35 @@ class BarcodeExtractor:
         hor_data = 255 - hor_data
         avg = np.average(hor_data)
 
-        pos1, pos2 = -1, -1
-        bits = ""
+        # Определяем ширину одного бита, отловив стартовую последовательность
+        start, end = -1, -1
+        curren_bits = ""
         for p in range(extended_width - 2):
             if hor_data[p] < avg and hor_data[p + 1] > avg:
-                bits += "1"
-                if pos1 == -1:
-                    pos1 = p
-                if bits == "101":
-                    pos2 = p
+                curren_bits += "1"
+                if start == -1:
+                    start = p
+                if curren_bits == "101":
+                    end = p
                     break
             if hor_data[p] > avg and hor_data[p + 1] < avg:
-                bits += "0"
+                curren_bits += "0"
 
-        bit_width = int((pos2 - pos1) / 3)
-        print(bit_width)
+        bit_width = int((end - start) / 3)
 
+        # Записываем результат, определяя число бит в каждом интервале между переходами через середину
+        # (Опираясь на длину одного бита)
         result_bits = ""
         for l in range(extended_width - 2):
             if hor_data[l] > avg and hor_data[l + 1] < avg:
-                interval = l - pos1
+                interval = l - start
                 cnt = interval / bit_width
                 result_bits += "1" * int(round(cnt))
-                pos1 = l
+                start = l
             if hor_data[l] < avg and hor_data[l + 1] > avg:
-                interval = l - pos1
+                interval = l - start
                 cnt = interval / bit_width
                 result_bits += "0" * int(round(cnt))
-                pos1 = l
+                start = l
 
         return result_bits
