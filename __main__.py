@@ -1,4 +1,5 @@
-from file_checker import FileChecker
+from barcode_reader.filechecker import FileChecker
+
 def main():
     file_path = input("Введите абсолютный путь до файла штрихкода: ").strip()
     checker = FileChecker(file_path)
@@ -12,4 +13,5 @@ def main():
               f"Разрешены: {', '.join(FileChecker.ALLOWED_EXTENSIONS)}")
         return
 
-main()
+if __name__ == "__main__":
+    main()
